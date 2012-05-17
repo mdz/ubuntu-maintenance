@@ -5,8 +5,10 @@ app = Flask(__name__)
 
 @app.route('/')
 def dumpenv():
+    s = ''
     for key, value in os.environ:
-        print "%s=%s" % (key, value)
+        s += "%s=%s" % (key, value)
+    return s
 
 if __name__ == '__main__':
     # Bind to PORT if defined, otherwise default to 5000.
