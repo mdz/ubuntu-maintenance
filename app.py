@@ -1,11 +1,16 @@
+import sys
 import os
+import subprocess
 
 from flask import Flask
 app = Flask(__name__)
 
 @app.route('/')
-def dumpenv():
-    return '<br>'.join(['%s=%s' % (k, v) for k, v in os.environ.items()])
+def show_unmaintained_packages():
+    packages = subprocess.check_output('''dpkg -l | grep '^ii' |  awk ' {print $2}' | xargs apt-cache show | grep-dctrl -v -FSupported --exact-match -nsPackage 5y''', shell=True).split('\n')
+    for package in packages:
+        if package:
+            print package
 
 if __name__ == '__main__':
     # Bind to PORT if defined, otherwise default to 5000.
