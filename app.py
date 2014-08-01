@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def unmaintained_packages():
-    packages = subprocess.check_output('''dpkg -l | grep '^ii' |  awk ' {print $2}' | xargs apt-cache show | grep-dctrl -v -FSupported --exact-match -nsPackage 5y''', shell=True).split('\n')
+    packages = subprocess.check_output('''dpkg -l | grep '^ii' |  awk ' {print $2}' | xargs apt-cache show | ./grep-dctrl -v -FSupported --exact-match -nsPackage 5y''', shell=True).split('\n')
     return Response('\n'.join(packages), content_type='text/plain')
 
 if __name__ == '__main__':
