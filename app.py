@@ -10,19 +10,24 @@ app.debug = True
 
 def ubuntu_release():
     try:
-        return subprocess.check_output(['lsb_release','-rs']).strip()
+        release = subprocess.check_output(['lsb_release','-rs']).strip()
     except subprocess.CalledProcessError:
         with open('/etc/lsb-release') as f:
             for line in f:
                 k, v = line.split('=')
                 if k == 'DISTRIB_RELEASE':
-                    return v
+                    release = v
             raise 'Failed to determine which Ubuntu release this is'
+
+    print "Ubuntu release: %s" % release
+    return release
 
 def ubuntu_release_date(version_number):
     year, month = map(int,version_number.split('.'))
     # support periods are only accurate to the month anyway
-    return datetime.datetime(year=year,month=month,day=1)
+    dt = datetime.datetime(year=2000+year,month=month,day=1)
+    print "Ubuntu release date: %s" % dt
+    return dt
 
 def support_period_text_to_relativedelta(text):
     if text is None: return None
