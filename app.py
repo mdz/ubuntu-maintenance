@@ -9,7 +9,15 @@ app = Flask(__name__)
 app.debug = True
 
 def ubuntu_release():
-    return subprocess.check_output(['lsb_release','-rs']).strip()
+    try:
+        return subprocess.check_output(['lsb_release','-rs']).strip()
+    except subprocess.CalledProcessError:
+        with open('/etc/lsb-release') as f:
+            for line in f:
+                k, v = line.split('=')
+                if k == 'DISTRIB_RELEASE':
+                    return v
+            raise 'Failed to determine which Ubuntu release this is'
 
 def ubuntu_release_date(version_number):
     year, month = map(int,version_number.split('.'))
