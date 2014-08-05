@@ -9,6 +9,7 @@ app = Flask(__name__)
 app.debug = True
 
 def ubuntu_release():
+    release = None
     try:
         release = subprocess.check_output(['lsb_release','-rs']).strip()
     except subprocess.CalledProcessError:
@@ -17,7 +18,9 @@ def ubuntu_release():
                 k, v = line.split('=')
                 if k == 'DISTRIB_RELEASE':
                     release = v
-            raise 'Failed to determine which Ubuntu release this is'
+                    break
+            if not release:
+                raise 'Failed to determine which Ubuntu release this is'
 
     print "Ubuntu release: %s" % release
     return release
