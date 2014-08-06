@@ -85,7 +85,7 @@ def as_json():
 @app.route('/')
 def as_text():
     response = ''
-    for package, status in package_maintenance_status().items():
+    for package, status in sorted(package_maintenance_status().items(), key=lambda x: x[1]):
         response += '%s: %s\n' % (package, status)
 
     return Response(response, content_type='text/plain')
