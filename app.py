@@ -12,7 +12,7 @@ def ubuntu_release():
     release = None
     try:
         release = subprocess.check_output(['lsb_release','-rs']).strip()
-    except subprocess.CalledProcessError:
+    except:
         with open('/etc/lsb-release') as f:
             for line in f:
                 k, v = line.split('=')
