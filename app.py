@@ -68,11 +68,10 @@ def package_maintenance_status():
     release_date = ubuntu_release_date(ubuntu_release())
     package_status = {}
     for package, support_period in get_package_maintenance_periods().items():
-        print package, support_period, release_date, now
         if support_period is None:
             package_status[package] = 'Unknown'
         elif release_date + support_period < now:
-            print "%s > %s" % (release_date+support_period, now)
+            #print "Lapsed: %s > %s" % (release_date+support_period, now)
             package_status[package] = 'Lapsed'
         else:
             package_status[package] = 'OK'
