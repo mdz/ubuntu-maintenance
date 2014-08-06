@@ -63,20 +63,33 @@ def get_package_maintenance_periods():
             pass
     return supported
 
-@app.route('/')
-def unmaintained_packages():
+def package_maintenance_status():
     now = datetime.datetime.now()
     release_date = ubuntu_release_date(ubuntu_release())
     package_status = {}
     for package, support_period in get_package_maintenance_periods().items():
+        print package, support_period, release_date, now
         if support_period is None:
             package_status[package] = 'Unknown'
-        elif release_date + support_period > now:
+        elif release_date + support_period < now:
+            print "%s > %s" % (release_date+support_period, now)
             package_status[package] = 'Lapsed'
         else:
             package_status[package] = 'OK'
 
-    return Response(json.dumps(package_status), content_type='application/json')
+    return package_status
+
+@app.route('/json')
+def as_json():
+    return Response(json.dumps(package_maintenance_status()), content_type='application/json')
+
+@app.route('/')
+def as_text():
+    response = ''
+    for package, status in package_maintenance_status().items():
+        response += '%s: %s\n' % (package, status)
+
+    return Response(response, content_type='text/plain')
 
 if __name__ == '__main__':
     # Bind to PORT if defined, otherwise default to 5000.
